@@ -1,0 +1,12 @@
+[sqruff]
+dialect = clickhouse
+rules = all
+templater = jinja
+
+# RF04: Allow keywords as column names
+exclude_rules = RF04
+
+[sqruff:indentation]
+indent_unit = space
+tab_space_size = 4
+indented_joins = True
