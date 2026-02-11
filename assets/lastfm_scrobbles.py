@@ -55,6 +55,10 @@ def lastfm_scrobbles() -> pl.DataFrame:
         pl
         .col("date")
         .map_elements(lambda x: x["uts"] if isinstance(x, dict) else None)
+        .cast(pl.Int64)
+        # Convert from seconds to milliseconds and then to a datetime
+        .map_elements(lambda x: x * 1000 if x is not None else None)
+        .cast(pl.Datetime(time_unit="ms"))
         .alias("timestamp")
     )
     df = df.drop("date")

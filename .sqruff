@@ -6,6 +6,10 @@ templater = jinja
 # RF04: Allow keywords as column names
 exclude_rules = RF04
 
+[sqlfluff:rules:layout.long_lines]
+ignore_comment_lines = True
+ignore_comment_clauses = True
+
 [sqruff:indentation]
 indent_unit = space
 tab_space_size = 4
