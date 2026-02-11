@@ -10,3 +10,6 @@ check:
 
 run:
 	uv run bdp materialize
+
+serve:
+	pnpm -C observable dev
