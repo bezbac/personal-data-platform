@@ -4,6 +4,7 @@ lint:
 	uv run ruff check
 	uv run ty check
 	uv run sqruff lint assets/
+	pnpm -C observable format:check
 
 check:
 	uv run bdp check
