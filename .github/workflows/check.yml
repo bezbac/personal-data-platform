@@ -1,0 +1,57 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: "observable/package.json"
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "observable/package.json"
+          cache-dependency-path: "observable/pnpm-lock.yaml"
+          cache: "pnpm"
+
+      - name: Install python dependencies
+        run: uv sync
+
+      - name: Install Node.js dependencies
+        run: pnpm -C observable install
+
+      - name: Run Ruff
+        run: uv run ruff check
+
+      - name: Run type check
+        run: uv run ty check
+
+      - name: Run sqruff
+        run: uv run sqruff lint assets/
+
+      - name: Check Observable formatting
+        run: pnpm -C observable format:check
