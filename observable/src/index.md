@@ -2,17 +2,26 @@
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "npm:d3";
 
-const top100 = [...await FileAttachment("assets/lastfm_artists_with_most_listening_weeks.parquet").parquet()].slice(0, 100)
-const scrobbles = [...await FileAttachment("assets/lastfm_scrobbles_with_ranking.parquet").parquet()].map(d => ({
-    ...d,
-    rank: Number(d.rank),
-    total_plays: Number(d.total_plays)
-}))
+const top100 = [
+  ...(await FileAttachment(
+    "assets/lastfm_artists_with_most_listening_weeks.parquet",
+  ).parquet()),
+].slice(0, 100);
+const scrobbles = [
+  ...(await FileAttachment(
+    "assets/lastfm_scrobbles_with_ranking.parquet",
+  ).parquet()),
+].map((d) => ({
+  ...d,
+  rank: Number(d.rank),
+  total_plays: Number(d.total_plays),
+}));
 
-const maxRank = Math.max(...scrobbles.map(d => d.rank))
-const colorScale = d3.scaleSequential()
-    .domain([1, maxRank])
-    .interpolator(d3.interpolateBlues)
+const maxRank = Math.max(...scrobbles.map((d) => d.rank));
+const colorScale = d3
+  .scaleSequential()
+  .domain([1, maxRank])
+  .interpolator(d3.interpolateBlues);
 ```
 
 <div class="card">
