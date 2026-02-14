@@ -55,3 +55,9 @@ jobs:
 
       - name: Check Observable formatting
         run: pnpm -C observable format:check
+
+      - name: Run pytest tests
+        run: uv run pytest utils/ -v
+
+      - name: Run doctests
+        run: uv run python -m doctest utils/featured_artists.py -v

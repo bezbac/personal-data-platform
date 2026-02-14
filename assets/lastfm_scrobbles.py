@@ -6,6 +6,8 @@ import os
 
 import polars as pl
 
+from utils import extract_featured_artists
+
 
 def lastfm_scrobbles() -> pl.DataFrame:
     path = os.path.join(os.getcwd(), "input/lastfm", "scrobbles.json")
@@ -62,6 +64,16 @@ def lastfm_scrobbles() -> pl.DataFrame:
         .alias("timestamp")
     )
     df = df.drop("date")
+
+    # Extract featured artists from track names
+    # Handles patterns like (feat. Artist), [feat. Artist], (with Artist), etc.
+    # See extract_featured_artists() docstring for full details
+    df = df.with_columns(
+        pl
+        .col("name")
+        .map_elements(extract_featured_artists, return_dtype=pl.List(pl.String))
+        .alias("featured_artists")
+    )
 
     # Drop columns that are not needed for analysis
     df = df.drop("streamable")

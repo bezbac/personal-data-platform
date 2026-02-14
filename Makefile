@@ -1,5 +1,9 @@
 .DEFAULT_GOAL := run
 
+test:
+	uv run pytest utils/ -v
+	uv run python -m doctest utils/featured_artists.py -v
+
 lint:
 	uv run ruff check
 	uv run ty check
