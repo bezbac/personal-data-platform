@@ -74,6 +74,29 @@ Uses `uv` for Python dependency management:
 - Virtual environment automatically managed
 - Run commands with `uv run <command>`
 
+## Testing
+
+- Run tests with `make test` (runs pytest on `utils/` + doctests)
+- Tests are located in `utils/test_*.py` files
+- Use pytest with parametrize for multiple test cases
+- Add doctests to functions for usage examples
+
+## Code Quality
+
+Run `make lint` before completing work. This runs:
+- `uv run ruff check` - Python linting (max line length: 88 chars)
+- `uv run ty check` - Python type checking
+- `uv run sqruff lint assets/` - SQL linting
+- `pnpm -C observable format:check` - Observable formatting
+
+## Utility Modules
+
+Shared Python utilities go in `/utils/` directory:
+- Keep utilities pure (no side effects)
+- Include comprehensive test files
+- Use type hints and docstrings
+- Handle edge cases explicitly
+
 ## Observable Integration
 
 Parquet files are symlinked into `observable/src/assets/` for use in
