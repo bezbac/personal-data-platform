@@ -4,7 +4,8 @@ rules = all
 templater = jinja
 
 # RF04: Allow keywords as column names
-exclude_rules = RF04
+# CP03: ClickHouse functions like arrayJoin must be camelCase
+exclude_rules = RF04,CP03
 
 [sqlfluff:rules:layout.long_lines]
 ignore_comment_lines = True

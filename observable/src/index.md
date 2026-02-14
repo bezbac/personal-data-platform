@@ -13,9 +13,27 @@ const artistsDataRaw = [
   ...d,
   year: Number(d.year),
   listening_weeks: Number(d.listening_weeks),
+  listening_weeks_with_features: Number(d.listening_weeks_with_features),
 }));
 
-const artistsData = artistsDataRaw
+const artistsDataWithFeatures = artistsDataRaw
+  .reduce((acc, d) => {
+    const existing = acc.find((x) => x.artist_name === d.artist_name);
+    if (existing) {
+      existing.total_weeks += d.listening_weeks_with_features;
+    } else {
+      acc.push({
+        artist_name: d.artist_name,
+        display_name: d.artist_name,
+        total_weeks: d.listening_weeks_with_features,
+      });
+    }
+    return acc;
+  }, [])
+  .sort((a, b) => b.total_weeks - a.total_weeks)
+  .slice(0, 100);
+
+const artistsDataWithoutFeatures = artistsDataRaw
   .reduce((acc, d) => {
     const existing = acc.find((x) => x.artist_name === d.artist_name);
     if (existing) {
@@ -153,16 +171,40 @@ const viewType = Generators.input(viewTypeInput);
 ```
 
 ```js
+const includeFeaturesInput = Inputs.radio(
+  ["Include features", "Exclude features"],
+  {
+    value: "Include features",
+    label: "",
+    disabled: viewType !== "Artists",
+  },
+);
+const includeFeatures = Generators.input(includeFeaturesInput);
+```
+
+```js
 const currentData = (() => {
   switch (viewType) {
     case "Artists":
-      return { summary: artistsData, raw: artistsDataRaw };
+      return {
+        summary:
+          includeFeatures === "Include features"
+            ? artistsDataWithFeatures
+            : artistsDataWithoutFeatures,
+        raw: artistsDataRaw,
+      };
     case "Albums":
       return { summary: albumsData, raw: albumsDataRaw };
     case "Songs":
       return { summary: songsData, raw: songsDataRaw };
     default:
-      return { summary: artistsData, raw: artistsDataRaw };
+      return {
+        summary:
+          includeFeatures === "Include features"
+            ? artistsDataWithFeatures
+            : artistsDataWithoutFeatures,
+        raw: artistsDataRaw,
+      };
   }
 })();
 ```
@@ -239,7 +281,10 @@ const filteredRaw = rawData
 <div class="card">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h2 style="margin: 0;">${viewType} by count of weeks with at least one play</h2>
-        ${viewTypeInput}
+        <div style="display: flex; gap: 16px; align-items: center;">
+            ${viewType === "Artists" ? includeFeaturesInput : null}
+            ${viewTypeInput}
+        </div>
     </div>
     ${resize((width) => Plot.plot({
             width,
@@ -260,7 +305,7 @@ const filteredRaw = rawData
             },
             marks: [
                 Plot.barX(filteredRaw, {
-                    x: "listening_weeks",
+                    x: viewType === "Artists" && includeFeatures === "Include features" ? "listening_weeks_with_features" : "listening_weeks",
                     y: "display_name",
                     fill: "year",
                     sort: { y: "-x", reduce: "sum" }
