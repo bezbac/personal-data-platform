@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from bdp.api import find_assets_root
 from bdp.materialize import (
@@ -12,6 +13,7 @@ from bdp.materialize import (
     discover_assets,
     materialize,
 )
+from bdp.mock import generate_all_mocks
 
 CHECK_RULES = (
     ("File name matches asset.name", check_asset_filenames),
@@ -53,6 +55,11 @@ def _list_assets(_: argparse.Namespace) -> None:
             print(f"  {connector} {dep}")
 
 
+def _mock(args: argparse.Namespace) -> None:
+    input_root = Path.cwd() / "input"
+    generate_all_mocks(input_root, force=args.force)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="bdp",
@@ -84,6 +91,20 @@ def main() -> None:
         help="List available assets.",
     )
     list_parser.set_defaults(func=_list_assets)
+
+    mock_parser = subparsers.add_parser(
+        "mock",
+        help="Generate mock input data.",
+        description=(
+            "Generate mock input data from .mock.py files in input/ directories."
+        ),
+    )
+    mock_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing files without prompting.",
+    )
+    mock_parser.set_defaults(func=_mock)
 
     args = parser.parse_args()
     args.func(args)

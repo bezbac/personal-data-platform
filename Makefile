@@ -18,3 +18,6 @@ run:
 
 serve:
 	pnpm -C observable dev
+
+mock:
+	uv run bdp mock
