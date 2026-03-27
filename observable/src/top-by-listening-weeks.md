@@ -236,7 +236,7 @@ const filteredRaw = rawData
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h2 style="margin: 0;">${viewType} by count of weeks with at least one play</h2>
         <div style="display: flex; gap: 16px; align-items: center;">
-            ${viewType === "Artists" ? includeFeaturesInput : null}
+            ${viewType === "Artists" ? includeFeaturesInput : ""}
             ${viewTypeInput}
         </div>
     </div>
