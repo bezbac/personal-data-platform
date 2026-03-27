@@ -1,5 +1,5 @@
 # asset.name = lastfm_scrobbles
-# asset.description = Raw data for Spotify track plays
+# asset.description = Raw data for Lastfm scrobbles
 
 import json
 import os
